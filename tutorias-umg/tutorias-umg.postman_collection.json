@@ -1,0 +1,1277 @@
+{
+  "info": {
+    "name": "Tutorías UMG - API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Ejecute primero un login del rol que quiera probar. El token CSRF se guarda solo."
+  },
+  "variable": [
+    {
+      "key": "base",
+      "value": "http://localhost/tutorias-umg/api/controllers"
+    },
+    {
+      "key": "csrf",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Sesión",
+      "item": [
+        {
+          "name": "Login admin",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/sesion.php?accion=login",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "sesion.php"
+              ],
+              "query": [
+                {
+                  "key": "accion",
+                  "value": "login"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"usuario\": \"admin\",\n  \"clave\": \"Umg2026!\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const j = pm.response.json();",
+                  "if (j.data && j.data.csrf) pm.collectionVariables.set('csrf', j.data.csrf);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login cmorales",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/sesion.php?accion=login",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "sesion.php"
+              ],
+              "query": [
+                {
+                  "key": "accion",
+                  "value": "login"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"usuario\": \"cmorales\",\n  \"clave\": \"Umg2026!\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const j = pm.response.json();",
+                  "if (j.data && j.data.csrf) pm.collectionVariables.set('csrf', j.data.csrf);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login 5190-22-1001",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/sesion.php?accion=login",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "sesion.php"
+              ],
+              "query": [
+                {
+                  "key": "accion",
+                  "value": "login"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"usuario\": \"5190-22-1001\",\n  \"clave\": \"Umg2026!\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const j = pm.response.json();",
+                  "if (j.data && j.data.csrf) pm.collectionVariables.set('csrf', j.data.csrf);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Registro de estudiante",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/sesion.php?accion=registro",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "sesion.php"
+              ],
+              "query": [
+                {
+                  "key": "accion",
+                  "value": "registro"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Andrea Méndez\",\n  \"carne\": \"5190-24-2001\",\n  \"correo\": \"amendez@miumg.edu.gt\",\n  \"clave\": \"Clave1234\",\n  \"confirmacion\": \"Clave1234\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const j = pm.response.json();",
+                  "if (j.data && j.data.csrf) pm.collectionVariables.set('csrf', j.data.csrf);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login incorrecto (401)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/sesion.php?accion=login",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "sesion.php"
+              ],
+              "query": [
+                {
+                  "key": "accion",
+                  "value": "login"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"usuario\": \"admin\",\n  \"clave\": \"mala\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Sesión actual",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/sesion.php",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "sesion.php"
+              ],
+              "query": []
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const j = pm.response.json();",
+                  "if (j.data && j.data.csrf) pm.collectionVariables.set('csrf', j.data.csrf);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Cerrar sesión",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/sesion.php?accion=logout",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "sesion.php"
+              ],
+              "query": [
+                {
+                  "key": "accion",
+                  "value": "logout"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Resumen público (sin sesión)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/inicio.php",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "inicio.php"
+              ],
+              "query": []
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Usuarios (admin)",
+      "item": [
+        {
+          "name": "Listar",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/usuarios.php",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "usuarios.php"
+              ],
+              "query": []
+            }
+          }
+        },
+        {
+          "name": "Filtrar catedráticos",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/usuarios.php?rol=tutor&buscar=ing",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "usuarios.php"
+              ],
+              "query": [
+                {
+                  "key": "rol",
+                  "value": "tutor"
+                },
+                {
+                  "key": "buscar",
+                  "value": "ing"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Obtener uno",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/usuarios.php?id=2",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "usuarios.php"
+              ],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "2"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Crear",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/usuarios.php",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "usuarios.php"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"usuario\": \"5190-24-2000\",\n  \"nombre\": \"Andrea Méndez\",\n  \"correo\": \"amendez@miumg.edu.gt\",\n  \"clave\": \"Clave12345\",\n  \"rol\": \"estudiante\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Crear duplicado (409)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/usuarios.php",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "usuarios.php"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"usuario\": \"admin\",\n  \"nombre\": \"X\",\n  \"correo\": \"admin@umg.edu.gt\",\n  \"clave\": \"Clave12345\",\n  \"rol\": \"admin\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Actualizar",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/usuarios.php?id=6",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "usuarios.php"
+              ],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "6"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"usuario\": \"5190-22-1002\",\n  \"nombre\": \"Diego Andrés Hernández\",\n  \"correo\": \"dhernandez@miumg.edu.gt\",\n  \"rol\": \"estudiante\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Desactivar",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/usuarios.php?id=6",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "usuarios.php"
+              ],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "6"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Activar",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/usuarios.php?id=6&accion=estado",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "usuarios.php"
+              ],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "6"
+                },
+                {
+                  "key": "accion",
+                  "value": "estado"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado\": 1\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Tutorías",
+      "item": [
+        {
+          "name": "Listar",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/tutorias.php",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "tutorias.php"
+              ],
+              "query": []
+            }
+          }
+        },
+        {
+          "name": "Buscar",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/tutorias.php?buscar=programaci",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "tutorias.php"
+              ],
+              "query": [
+                {
+                  "key": "buscar",
+                  "value": "programaci"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Detalle con catedráticos",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/tutorias.php?id=1",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "tutorias.php"
+              ],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Cursos (pensum)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/tutorias.php?accion=cursos",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "tutorias.php"
+              ],
+              "query": [
+                {
+                  "key": "accion",
+                  "value": "cursos"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Crear (admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/tutorias.php",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "tutorias.php"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"curso\": 3,\n  \"titulo\": \"Algoritmos y pseudocódigo\",\n  \"descripcion\": \"Diagramas de flujo y pseudocódigo.\",\n  \"fecha_inicio\": \"2026-11-02\",\n  \"fecha_fin\": \"2026-11-27\",\n  \"hora_inicio\": \"14:00\",\n  \"hora_fin\": \"18:00\",\n  \"dias\": [\n    \"1\",\n    \"2\",\n    \"3\",\n    \"4\",\n    \"5\"\n  ]\n}"
+            }
+          }
+        },
+        {
+          "name": "Actualizar (admin)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/tutorias.php?id=2",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "tutorias.php"
+              ],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "2"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"curso\": 7,\n  \"titulo\": \"Asesoría de Cálculo I\",\n  \"descripcion\": \"Límites, derivadas e integrales.\",\n  \"fecha_inicio\": \"2026-11-02\",\n  \"fecha_fin\": \"2026-11-27\",\n  \"hora_inicio\": \"14:00\",\n  \"hora_fin\": \"18:00\",\n  \"dias\": [\n    \"1\",\n    \"2\",\n    \"3\",\n    \"4\",\n    \"5\"\n  ]\n}"
+            }
+          }
+        },
+        {
+          "name": "Asignar catedráticos (admin)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/tutorias.php?id=2&accion=tutores",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "tutorias.php"
+              ],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "2"
+                },
+                {
+                  "key": "accion",
+                  "value": "tutores"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tutores\": [\n    4,\n    3\n  ]\n}"
+            }
+          }
+        },
+        {
+          "name": "Desactivar (admin)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/tutorias.php?id=4",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "tutorias.php"
+              ],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "4"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Bloques (disponibilidad)",
+      "item": [
+        {
+          "name": "Listar",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/bloques.php",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "bloques.php"
+              ],
+              "query": []
+            }
+          }
+        },
+        {
+          "name": "Filtrar por tutoría y fecha",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/bloques.php?tutoria=1&desde=2026-10-01",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "bloques.php"
+              ],
+              "query": [
+                {
+                  "key": "tutoria",
+                  "value": "1"
+                },
+                {
+                  "key": "desde",
+                  "value": "2026-10-01"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Publicar (tutor)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/bloques.php",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "bloques.php"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tutoria\": 1,\n  \"fecha\": \"2026-12-01\",\n  \"hora_inicio\": \"10:00\",\n  \"hora_fin\": \"11:30\",\n  \"enlace\": \"https://meet.google.com/abc-defg-hij\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Bloque fuera del rango de la tutoría (422)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/bloques.php",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "bloques.php"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tutoria\": 4,\n  \"fecha\": \"2026-12-25\",\n  \"hora_inicio\": \"10:00\",\n  \"hora_fin\": \"11:00\",\n  \"enlace\": \"https://meet.google.com/abc-defg-hij\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Publicar traslapado (409)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/bloques.php",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "bloques.php"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tutoria\": 3,\n  \"fecha\": \"2026-12-01\",\n  \"hora_inicio\": \"11:00\",\n  \"hora_fin\": \"12:00\",\n  \"enlace\": \"https://meet.google.com/abc-defg-hij\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Editar (tutor)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/bloques.php?id=2",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "bloques.php"
+              ],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "2"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tutoria\": 1,\n  \"fecha\": \"2026-12-02\",\n  \"hora_inicio\": \"15:00\",\n  \"hora_fin\": \"16:00\",\n  \"enlace\": \"https://meet.google.com/abc-defg-hij\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Cancelar (tutor)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/bloques.php?id=2",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "bloques.php"
+              ],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "2"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Solicitudes",
+      "item": [
+        {
+          "name": "Listar (según rol)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/solicitudes.php",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "solicitudes.php"
+              ],
+              "query": []
+            }
+          }
+        },
+        {
+          "name": "Filtrar por estado",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/solicitudes.php?estado=pendiente",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "solicitudes.php"
+              ],
+              "query": [
+                {
+                  "key": "estado",
+                  "value": "pendiente"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Solicitar bloque (estudiante)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/solicitudes.php",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "solicitudes.php"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bloque\": 4\n}"
+            }
+          }
+        },
+        {
+          "name": "Solicitar duplicado (409)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/solicitudes.php",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "solicitudes.php"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bloque\": 4\n}"
+            }
+          }
+        },
+        {
+          "name": "Cancelar (estudiante)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/solicitudes.php?id=1&accion=cancelar",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "solicitudes.php"
+              ],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "1"
+                },
+                {
+                  "key": "accion",
+                  "value": "cancelar"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Aceptar (fase 4 - 501)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/solicitudes.php?id=1&accion=aceptar",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "solicitudes.php"
+              ],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "1"
+                },
+                {
+                  "key": "accion",
+                  "value": "aceptar"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

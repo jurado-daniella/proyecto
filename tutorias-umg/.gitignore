@@ -1,0 +1,2 @@
+frontend/node_modules/
+# api/.env se incluye a propósito para la presentación (valores por defecto de XAMPP, sin secretos reales)
