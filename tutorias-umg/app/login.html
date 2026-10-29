@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inicia sesión | DAM Tutorías</title>
+  <link rel="icon" type="image/png" href="assets/logo/dam-favicon.png">
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+
+  <div class="auth">
+    <aside class="auth-side">
+      <img src="assets/personajes/tutor-01.jpg" alt="">
+      <a href="index.html" class="brand"><img src="assets/logo/dam-logo-horizontal-white.png" alt="DAM, volver al inicio"></a>
+      <p>Tus tutorías, tus horarios y tus catedráticos en un solo lugar.</p>
+    </aside>
+
+    <main class="auth-main">
+      <form class="auth-form" id="formulario">
+        <a href="index.html" class="back">← Volver al inicio</a>
+        <h1>Inicia sesión</h1>
+
+        <div id="mensajes"></div>
+
+        <label class="field">Carné, usuario o correo
+          <input name="usuario" autocomplete="username" required autofocus>
+        </label>
+        <label class="field">Contraseña
+          <input name="clave" type="password" autocomplete="current-password" required>
+        </label>
+
+        <button class="btn btn-red" id="boton">Ingresar</button>
+
+        <p class="auth-switch">¿Eres estudiante y no tienes cuenta? <a href="registro.html">Regístrate</a></p>
+      </form>
+    </main>
+  </div>
+
+  <script src="js/comun.js"></script>
+  <script src="js/acceso.js"></script>
+</body>
+</html>

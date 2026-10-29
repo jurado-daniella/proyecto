@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mis horarios | DAM Tutorías</title>
+  <link rel="icon" type="image/png" href="assets/logo/dam-favicon.png">
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body class="panel">
+
+  <header class="barra" id="barra"></header>
+
+  <main class="main">
+    <section class="tarjeta">
+      <h1 class="tarjeta-titulo">Mi disponibilidad</h1>
+
+      <div class="stack" id="mensajes"></div>
+
+      <form id="form-bloque" hidden>
+        <div class="grupo">
+          <h2 id="titulo-form">Nuevo horario</h2>
+          <div class="form-grid">
+            <label class="field full">Tutoría
+              <select name="tutoria" id="select-tutoria" required></select>
+            </label>
+            <div class="alert alert-info full" id="rango" hidden></div>
+            <label class="field">Fecha<input name="fecha" type="date" required></label>
+            <label class="field">Hora de inicio<input name="hora_inicio" type="time" required></label>
+            <label class="field">Hora de fin<input name="hora_fin" type="time" required></label>
+            <label class="field full">Enlace de la reunión
+              <input name="enlace" type="url" placeholder="https://meet.google.com/..." required>
+            </label>
+            <div class="form-actions">
+              <button class="btn btn-navy">Guardar</button>
+              <button type="button" class="btn" onclick="cerrarFormulario()">Cancelar</button>
+            </div>
+          </div>
+        </div>
+      </form>
+
+      <div class="grupo">
+        <h2>Filtros de búsqueda</h2>
+        <div class="filters">
+          <label>Estado:
+            <select id="f-estado">
+              <option value="">Todos</option>
+              <option value="disponible">Disponible</option>
+              <option value="reservado">Reservado</option>
+              <option value="cancelado">Cancelado</option>
+            </select>
+          </label>
+          <label>Desde:<input type="date" id="f-desde"></label>
+          <label>Hasta:<input type="date" id="f-hasta"></label>
+        </div>
+      </div>
+
+      <div id="tabla"><p class="muted">Cargando…</p></div>
+
+      <div class="tarjeta-botones">
+        <button class="btn btn-red" onclick="nuevoBloque()">Publicar horario</button>
+        <button class="btn" onclick="cargarBloques()">Actualizar</button>
+      </div>
+    </section>
+  </main>
+
+  <script src="js/comun.js"></script>
+  <script src="js/bloques.js"></script>
+</body>
+</html>

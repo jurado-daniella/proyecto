@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Solicitudes | DAM Tutorías</title>
+  <link rel="icon" type="image/png" href="assets/logo/dam-favicon.png">
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body class="panel">
+
+  <header class="barra" id="barra"></header>
+
+  <main class="main">
+    <section class="tarjeta">
+      <h1 class="tarjeta-titulo" id="titulo">Solicitudes de Tutorías</h1>
+
+      <div class="stack" id="mensajes"></div>
+
+      <div class="split">
+        <div>
+          <div class="grupo">
+            <h2>Filtros de búsqueda</h2>
+            <form class="filters" id="form-filtros">
+              <label><span id="texto-persona">Estudiante:</span>
+                <input id="f-texto">
+              </label>
+              <label>Tutoría:
+                <select id="f-tutoria"><option value="">Todas</option></select>
+              </label>
+              <label>Estado:
+                <select id="f-estado">
+                  <option value="">Todas</option>
+                  <option value="pendiente">Pendiente</option>
+                  <option value="aceptada">Aceptada</option>
+                  <option value="rechazada">Rechazada</option>
+                  <option value="cancelada">Cancelada</option>
+                  <option value="atendida">Atendida</option>
+                </select>
+              </label>
+              <button class="btn btn-navy">Buscar</button>
+            </form>
+          </div>
+
+          <div id="tabla"><p class="muted">Cargando…</p></div>
+        </div>
+
+        <!-- Calendario del mes con un punto por cada solicitud del día -->
+        <div class="grupo calendar">
+          <h2>Calendario de tutorías</h2>
+          <div class="calendar-head">
+            <button onclick="moverMes(-1)" aria-label="Mes anterior">‹</button>
+            <strong id="mes"></strong>
+            <button onclick="moverMes(1)" aria-label="Mes siguiente">›</button>
+          </div>
+          <div class="calendar-grid" id="calendario"></div>
+          <div class="legend">
+            <span><i class="c-pendiente"></i> Pendiente</span>
+            <span><i class="c-aceptada"></i> Confirmada</span>
+            <span><i class="c-cancelada"></i> Cancelada / rechazada</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="tarjeta-botones">
+        <button class="btn btn-red" id="boton-cancelar" onclick="cancelarSolicitud()" hidden>Cancelar solicitud</button>
+        <button class="btn" onclick="seleccionada = null; cargarSolicitudes()">Actualizar</button>
+      </div>
+    </section>
+  </main>
+
+  <script src="js/comun.js"></script>
+  <script src="js/solicitudes.js"></script>
+</body>
+</html>

@@ -11,7 +11,7 @@ try {
     $connection = new Connection();
 
     switch ($method) {
-        // Sesión actual: lo usa React al cargar para saber si ya hay alguien conectado
+        // Sesión actual: lo usa cada página al cargar para saber si ya hay alguien conectado
         case 'GET':
             $user = Auth::user($connection);
             Response::success("Sesión activa", ['usuario' => $user, 'csrf' => Auth::csrfToken()]);

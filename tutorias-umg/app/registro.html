@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crea tu cuenta | DAM Tutorías</title>
+  <link rel="icon" type="image/png" href="assets/logo/dam-favicon.png">
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+
+  <div class="auth">
+    <aside class="auth-side">
+      <img src="assets/personajes/estudiante-04.jpg" alt="">
+      <a href="index.html" class="brand"><img src="assets/logo/dam-logo-horizontal-white.png" alt="DAM, volver al inicio"></a>
+      <p>Pide ayuda a tiempo: un buen tutor cambia todo el ciclo.</p>
+    </aside>
+
+    <main class="auth-main">
+      <form class="auth-form" id="formulario">
+        <a href="index.html" class="back">← Volver al inicio</a>
+        <h1>Crea tu cuenta</h1>
+        <p class="muted">Solo para estudiantes de la UMG.</p>
+
+        <div id="mensajes"></div>
+
+        <label class="field">Nombre completo
+          <input name="nombre" autocomplete="name" required maxlength="120" autofocus>
+        </label>
+        <label class="field">Carné <small>Ej. 5190-24-1234</small>
+          <input name="carne" pattern="\d{4}-\d{2}-\d{1,6}" title="Formato 0000-00-0000" required>
+        </label>
+        <label class="field">Correo institucional
+          <input name="correo" type="email" placeholder="usuario@miumg.edu.gt" pattern=".+@miumg\.edu\.gt" title="Debe terminar en @miumg.edu.gt" autocomplete="email" required>
+        </label>
+        <label class="field">Contraseña <small>Mínimo 8 caracteres</small>
+          <input name="clave" type="password" minlength="8" autocomplete="new-password" required>
+        </label>
+        <label class="field">Confirmar contraseña
+          <input name="confirmacion" type="password" minlength="8" autocomplete="new-password" required>
+        </label>
+
+        <button class="btn btn-red" id="boton">Crear cuenta</button>
+
+        <p class="auth-switch">¿Ya tienes cuenta? <a href="login.html">Inicia sesión</a></p>
+      </form>
+    </main>
+  </div>
+
+  <script src="js/comun.js"></script>
+  <script src="js/acceso.js"></script>
+</body>
+</html>

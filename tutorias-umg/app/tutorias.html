@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tutorías | DAM Tutorías</title>
+  <link rel="icon" type="image/png" href="assets/logo/dam-favicon.png">
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body class="panel">
+
+  <header class="barra" id="barra"></header>
+
+  <main class="main">
+    <section class="tarjeta">
+      <h1 class="tarjeta-titulo">Tutorías del ciclo</h1>
+
+      <div class="stack" id="mensajes"></div>
+
+      <!-- Crear o editar tutoría -->
+      <form id="form-tutoria" hidden>
+        <div class="grupo">
+          <h2 id="titulo-form">Nueva tutoría</h2>
+          <div class="form-grid">
+            <label class="field">Curso del pensum
+              <select name="curso" id="select-curso" required></select>
+            </label>
+            <label class="field">Título<input name="titulo" required maxlength="150"></label>
+            <label class="field full">Descripción <small>opcional</small><textarea name="descripcion" rows="2"></textarea></label>
+
+            <label class="field">Desde<input name="fecha_inicio" type="date" required></label>
+            <label class="field">Hasta<input name="fecha_fin" type="date" required></label>
+            <label class="field">Franja: hora de inicio<input name="hora_inicio" type="time" required></label>
+            <label class="field">Franja: hora de fin<input name="hora_fin" type="time" required></label>
+
+            <fieldset class="days full">
+              <legend>Días en que se imparte</legend>
+              <span id="dias"></span>
+            </fieldset>
+
+            <div class="form-actions">
+              <button class="btn btn-navy">Guardar</button>
+              <button type="button" class="btn" onclick="cerrarFormularios()">Cancelar</button>
+            </div>
+          </div>
+        </div>
+      </form>
+
+      <!-- Asignar catedráticos -->
+      <form id="form-asignar" hidden>
+        <div class="grupo">
+          <h2 id="titulo-asignar">Catedráticos</h2>
+          <fieldset class="checks" id="lista-tutores"></fieldset>
+          <div class="form-actions">
+            <button class="btn btn-navy">Guardar asignación</button>
+            <button type="button" class="btn" onclick="cerrarFormularios()">Cancelar</button>
+          </div>
+        </div>
+      </form>
+
+      <div class="grupo">
+        <h2>Filtros de búsqueda</h2>
+        <div class="filters">
+          <label>Buscar:<input type="search" id="f-buscar" placeholder="Título o curso"></label>
+          <label>Curso:
+            <select id="f-curso"><option value="">Todos</option></select>
+          </label>
+        </div>
+      </div>
+
+      <div id="tabla"><p class="muted">Cargando…</p></div>
+
+      <div class="tarjeta-botones">
+        <button class="btn btn-red" onclick="nuevaTutoria()">Nueva tutoría</button>
+        <button class="btn" onclick="cargarTutorias()">Actualizar</button>
+      </div>
+    </section>
+  </main>
+
+  <script src="js/comun.js"></script>
+  <script src="js/tutorias.js"></script>
+</body>
+</html>

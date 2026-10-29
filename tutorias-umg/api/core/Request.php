@@ -2,7 +2,7 @@
 
 /**
  * Lectura y validación de los datos que envía el cliente.
- * React envía JSON, por eso se lee php://input ($_POST llega vacío con JSON).
+ * El JavaScript del navegador envía JSON, por eso se lee php://input ($_POST llega vacío con JSON).
  */
 class Request
 {

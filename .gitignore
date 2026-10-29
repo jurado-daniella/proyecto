@@ -1,2 +1,20 @@
-frontend/node_modules/
-# api/.env se incluye a propósito para la presentación (valores por defecto de XAMPP, sin secretos reales)
+# Dependencias de Node (por si alguien instala algo con npm)
+node_modules/
+
+# Configuración local de la base de datos: cada quien crea su api/.env
+# copiando api/.env.example. El .env.example SÍ se sube.
+.env
+
+# Logs
+*.log
+
+# Archivos del editor y del sistema
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Comprimidos
+*.zip
+*.rar
