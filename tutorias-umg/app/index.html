@@ -1,15 +1,103 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>DAM · Tutorías y Asesorías Académicas | UMG</title>
-    <link rel="icon" type="image/png" href="./assets/logo/dam-favicon.png" />
-    <meta name="theme-color" content="#142b4a" />
-    <script type="module" crossorigin src="./assets/index-Goo_Oxv1.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-CFV2Gumb.css">
-  </head>
-  <body>
-    <div id="root"></div>
-  </body>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DAM · Tutorías y Asesorías Académicas | UMG</title>
+  <link rel="icon" type="image/png" href="assets/logo/dam-favicon.png">
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+
+  <header class="menu-publico">
+    <div class="contenedor">
+      <img src="assets/logo/dam-logo-horizontal.png" alt="DAM Tutorías y Asesorías Académicas">
+      <div>
+        <a href="login.html" class="btn btn-outline">Iniciar sesión</a>
+        <a href="registro.html" class="btn btn-red">Crear cuenta</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="portada contenedor">
+      <div>
+        <p class="muted">Facultad de Ingeniería en Sistemas · UMG</p>
+        <h1>Tu conocimiento, <span>más cerca</span></h1>
+        <p>Encuentra al catedrático indicado para el curso que se te complica, aparta un horario y recibe la tutoría desde donde estés.</p>
+        <a href="registro.html" class="btn btn-red">Comenzar ahora</a>
+      </div>
+      <img src="assets/personajes/estudiante-02.jpg" alt="Estudiante de la UMG revisando su tutoría en la laptop">
+    </section>
+
+    <section class="bloque gris">
+      <div class="contenedor">
+        <h2>¿Cómo funciona?</h2>
+        <p class="muted">La coordinación publica las tutorías del ciclo, cada catedrático marca sus horas libres y tú eliges la que te quede.</p>
+        <ol class="pasos">
+          <li><span class="numero">1</span><h3>Busca tu tutoría</h3><p>Filtra por curso del pensum o por tema.</p></li>
+          <li><span class="numero">2</span><h3>Elige catedrático</h3><p>Mira quién la imparte y sus horarios.</p></li>
+          <li><span class="numero">3</span><h3>Envía tu solicitud</h3><p>Ves cuántos compañeros aplicaron al mismo horario.</p></li>
+          <li><span class="numero">4</span><h3>Recibe respuesta</h3><p>El catedrático acepta y te llega el enlace.</p></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- Cifras reales, calculadas en la base de datos -->
+    <section class="bloque">
+      <div class="contenedor cifras">
+        <div><strong id="total-estudiantes">–</strong>Estudiantes registrados</div>
+        <div><strong id="total-tutores">–</strong>Catedráticos</div>
+        <div><strong id="total-tutorias">–</strong>Tutorías abiertas</div>
+      </div>
+    </section>
+
+    <section class="bloque gris" id="seccion-catedraticos" hidden>
+      <div class="contenedor">
+        <h2>Catedráticos</h2>
+        <div class="catedraticos" id="catedraticos"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="pie">
+    © <span id="anio"></span> DAM · Proyecto del curso Desarrollo Web, Universidad Mariano Gálvez de Guatemala
+  </footer>
+
+  <script src="js/comun.js"></script>
+  <script>
+
+    $('#anio').textContent = new Date().getFullYear();
+
+    // Si ya tiene sesión iniciada lo mandamos directo al panel
+    api('sesion.php').then(() => location.href = 'inicio.html').catch(() => {});
+
+    async function cargarResumen() {
+      try {
+        let response = await api('inicio.php');
+        let cifras = response.data.indicadores;
+        $('#total-estudiantes').textContent = cifras.estudiantes;
+        $('#total-tutores').textContent = cifras.tutores;
+        $('#total-tutorias').textContent = cifras.tutorias;
+
+        let tarjetas = '';
+        response.data.tutores.forEach((tutor) => {
+          tarjetas += `
+            <div class="catedratico">
+              ${tutor.avatar ? `<img src="${esc(tutor.avatar)}" alt="">` : ''}
+              <h3>${esc(tutor.nombre)}</h3>
+              <p>${esc(tutor.cursos)}</p>
+            </div>`;
+        });
+        $('#catedraticos').innerHTML = tarjetas;
+        $('#seccion-catedraticos').hidden = response.data.tutores.length === 0;
+      } catch (error) {
+        console.error('se capturo el error', error);
+      }
+    }
+
+    cargarResumen();
+
+  </script>
+</body>
 </html>

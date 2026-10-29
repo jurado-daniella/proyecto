@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Usuarios | DAM Tutorías</title>
+  <link rel="icon" type="image/png" href="assets/logo/dam-favicon.png">
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body class="panel">
+
+  <header class="barra" id="barra"></header>
+
+  <main class="main">
+    <section class="tarjeta">
+      <h1 class="tarjeta-titulo">Administración de usuarios</h1>
+
+      <div class="stack" id="mensajes"></div>
+
+      <form id="form-usuario" hidden>
+        <div class="grupo">
+          <h2 id="titulo-form">Nuevo usuario</h2>
+          <div class="form-grid">
+            <label class="field">Nombre completo<input name="nombre" required maxlength="120"></label>
+            <label class="field">Usuario o carné<input name="usuario" required maxlength="50"></label>
+            <label class="field">Correo<input name="correo" type="email" required></label>
+            <label class="field"><span id="texto-clave">Contraseña</span>
+              <input name="clave" type="password" minlength="8" autocomplete="new-password">
+            </label>
+            <label class="field">Rol
+              <select name="rol">
+                <option value="admin">Coordinación</option>
+                <option value="tutor">Catedrático</option>
+                <option value="estudiante">Estudiante</option>
+              </select>
+            </label>
+            <div class="form-actions">
+              <button class="btn btn-navy">Guardar</button>
+              <button type="button" class="btn" onclick="cerrarFormulario()">Cancelar</button>
+            </div>
+          </div>
+        </div>
+      </form>
+
+      <div class="grupo">
+        <h2>Filtros de búsqueda</h2>
+        <div class="filters">
+          <label>Buscar:<input type="search" id="f-buscar" placeholder="Nombre, carné o correo"></label>
+          <label>Rol:
+            <select id="f-rol">
+              <option value="">Todos</option>
+              <option value="admin">Coordinación</option>
+              <option value="tutor">Catedrático</option>
+              <option value="estudiante">Estudiante</option>
+            </select>
+          </label>
+        </div>
+      </div>
+
+      <div id="tabla"><p class="muted">Cargando…</p></div>
+
+      <div class="tarjeta-botones">
+        <button class="btn btn-red" onclick="nuevoUsuario()">Nuevo usuario</button>
+        <button class="btn" onclick="cargarUsuarios()">Actualizar</button>
+      </div>
+    </section>
+  </main>
+
+  <script src="js/comun.js"></script>
+  <script src="js/usuarios.js"></script>
+</body>
+</html>

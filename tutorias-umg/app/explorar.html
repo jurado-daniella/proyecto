@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Buscar tutorías | DAM Tutorías</title>
+  <link rel="icon" type="image/png" href="assets/logo/dam-favicon.png">
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body class="panel">
+
+  <header class="barra" id="barra"></header>
+
+  <main class="main">
+    <!-- Paso 1: lista de tutorías -->
+    <section class="tarjeta" id="vista-lista">
+      <h1 class="tarjeta-titulo">Buscar tutorías</h1>
+
+      <div class="grupo">
+        <h2>Filtros de búsqueda</h2>
+        <div class="filters">
+          <label>Curso o tema:<input type="search" id="f-buscar"></label>
+          <label>Curso:
+            <select id="f-curso"><option value="">Todos</option></select>
+          </label>
+        </div>
+      </div>
+
+      <div id="lista"><p class="muted">Cargando…</p></div>
+    </section>
+
+    <!-- Paso 2: catedrático y horario de la tutoría elegida -->
+    <section class="tarjeta" id="vista-detalle" hidden>
+      <h1 class="tarjeta-titulo" id="detalle-titulo"></h1>
+      <p class="muted" id="detalle-info" style="margin-bottom: 1rem"></p>
+
+      <div class="stack" id="mensajes"></div>
+
+      <div class="grupo">
+        <h2>1. Elija el catedrático</h2>
+        <div class="tutor-pick" id="tutores"></div>
+      </div>
+
+      <div class="grupo">
+        <h2>2. Elija el horario</h2>
+        <div id="horarios"></div>
+      </div>
+
+      <div class="tarjeta-botones">
+        <button class="btn" onclick="regresar()">← Regresar</button>
+        <button class="btn" onclick="cargarHorarios()">Actualizar</button>
+      </div>
+    </section>
+  </main>
+
+  <script src="js/comun.js"></script>
+  <script src="js/explorar.js"></script>
+</body>
+</html>

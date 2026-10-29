@@ -6,9 +6,9 @@
 2. Cada **catedrático** publica sus horarios disponibles dentro de ese rango.
 3. El **estudiante** (que se registra solo con su carné y correo @miumg.edu.gt) elige catedrático y horario y envía su solicitud.
 
-**Tecnologías:** PHP 8 (MVC, PDO) · MySQL/MariaDB · React 18 (Vite)
+**Tecnologías:** PHP 8 (MVC, PDO) · MySQL/MariaDB · HTML, CSS y JavaScript (vanilla, sin frameworks)
 
-## Ejecutar en XAMPP (no requiere Node)
+## Ejecutar en XAMPP
 
 1. Copiar la carpeta `tutorias-umg` dentro de `C:\xampp\htdocs\`.
 2. Encender **Apache** y **MySQL** en el panel de XAMPP.
@@ -38,9 +38,11 @@ api/
   core/             Env, Configuration, Connection (PDO), Response, Request, Auth
   models/           consultas y reglas de negocio (Usuarios, Tutorias, Bloques, Solicitudes)
   controllers/      un archivo por recurso; despacha según el método HTTP y responde JSON
-app/                build de React listo para Apache
-frontend/public/assets/  logos e imágenes de DAM
-frontend/           código fuente de React
+app/                páginas en HTML, CSS y JavaScript
+  css/estilos.css   estilos de todo el sitio
+  js/comun.js       funciones compartidas: fetch a la API, sesión, menú y fechas
+  js/*.js           un archivo por página (usuarios.js, tutorias.js, ...)
+  assets/           logos e imágenes de DAM
 database/           script de creación y datos de prueba
 ```
 
@@ -65,14 +67,12 @@ database/           script de creación y datos de prueba
 - El enlace de la reunión solo se muestra al estudiante cuando su solicitud es aceptada.
 - Bajas lógicas: usuarios y tutorías se desactivan para conservar el historial.
 
-## Desarrollo del frontend
+## Cómo funciona el frontend
 
-```
-cd frontend
-npm install
-npm run dev      # http://localhost:5173 (usa la API de XAMPP mediante proxy)
-npm run build    # genera la carpeta app/
-```
+No usa frameworks ni Node: cada página es un archivo `.html` con su `.js`.
+El JavaScript pide los datos a la API con `fetch`, arma el HTML con plantillas
+de texto y lo pone en la página con `innerHTML`. No hay que compilar nada:
+se edita el archivo y se recarga el navegador.
 
 ## Avance
 
