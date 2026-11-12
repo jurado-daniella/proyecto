@@ -70,4 +70,3 @@ finally:
  if tid:
   php="require 'tutorias-umg/api/core/Connection.php'; $c=new Connection(); $c->beginTransaction(); $id="+str(tid)+"; $c->exec('DELETE s FROM solicitudes s JOIN bloques b ON b.id=s.block_id WHERE b.tutoria_id='.$id); $c->exec('DELETE FROM bloques WHERE tutoria_id='.$id); $c->exec('DELETE FROM tutoria_tutor WHERE tutoria_id='.$id); $c->exec('DELETE FROM tutorias WHERE id='.$id); $c->commit();"
   subprocess.run(['C:/xampp/php/php.exe','-r',php],check=True,capture_output=True);print('QA fixtures removed')
-
