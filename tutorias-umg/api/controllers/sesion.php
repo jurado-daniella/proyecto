@@ -90,6 +90,7 @@ try {
                 Response::success("Contraseña actualizada", ['csrf' => Auth::csrfToken()]);
             }
             if ($action === 'logout') {
+                Auth::user($connection);
                 Auth::verifyCsrf();
                 $_SESSION = [];
                 session_destroy();

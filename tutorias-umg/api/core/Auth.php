@@ -29,6 +29,7 @@ class Auth
         }
         $_SESSION['credential'] = $fingerprint;
         unset($user['password']);
+        Audit::$actor = $user;
         return $user;
     }
 

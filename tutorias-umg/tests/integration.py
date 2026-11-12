@@ -22,7 +22,7 @@ try:
  check('anonymous protected endpoint',lambda:Client().call('usuarios.php',want=401))
  check('student cannot administer users',lambda:s.call('usuarios.php',want=403))
  check('tutor cannot administer users',lambda:t.call('usuarios.php',want=403))
- check('CSRF required',lambda:Client().call('sesion.php?accion=logout','POST',want=403))
+ check('anonymous logout rejected',lambda:Client().call('sesion.php?accion=logout','POST',want=401))
  check('admin lists users',lambda:a.call('usuarios.php'))
  check('invalid email rejected',lambda:a.call('usuarios.php','POST',{'usuario':'qa','nombre':'QA','correo':'invalido','clave':os.environ['DAM_TEST_PASSWORD'],'rol':'tutor'},422))
  check('invalid date rejected',lambda:t.call('bloques.php','POST',{'tutoria':1,'fecha':'2026-02-30','hora_inicio':'09:00','hora_fin':'10:00','enlace':'https://example.com'},422))

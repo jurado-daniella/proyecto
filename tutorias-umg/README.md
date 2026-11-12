@@ -147,3 +147,13 @@ estudiantes ni permiten publicar disponibilidad. La API comprueba estos permisos
 No requiere migración: status ya es un entero. Las tutorías originales no cambian.
 
 Los registros PRUEBA se conservaron para demostración; ver tests/SIMULACION.md.
+
+## Bitácora
+Ejecutar `database/migracion-bitacora.sql` en instalaciones existentes; ya aplicada
+localmente. Las nuevas instalaciones incluyen la tabla en `database.sql`.
+Coordinación consulta Bitácora desde su menú y filtra fecha, resultado o texto.
+Registra peticiones de escritura completadas y rechazadas, accesos y cierres de
+sesión. No almacena cuerpos HTTP, contraseñas, cookies ni tokens. Solo registra
+operaciones desde su activación, no reconstruye cambios anteriores ni cambios
+hechos directamente en phpMyAdmin. No expone edición ni eliminación en la API.
+Si falla el registro, se informa al log del servidor sin repetir operaciones del negocio.
