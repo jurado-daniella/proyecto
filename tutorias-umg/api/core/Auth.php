@@ -14,7 +14,7 @@ class Auth
             throw new ApiException("Debe iniciar sesión", 1001, 401);
         }
 
-        $statement = $connection->prepare("SELECT id, username, name, email, role, avatar FROM usuarios WHERE id = :id AND status = 1");
+        $statement = $connection->prepare("SELECT id, username, name, email, role, avatar, password FROM usuarios WHERE id = :id AND status = 1");
         $statement->execute(['id' => $userId]);
         $user = $statement->fetch();
 
@@ -22,6 +22,13 @@ class Auth
             session_unset();
             throw new ApiException("La sesión ya no es válida", 1001, 401);
         }
+        $fingerprint = hash('sha256', $user['password']);
+        if (isset($_SESSION['credential']) && !hash_equals($_SESSION['credential'], $fingerprint)) {
+            $_SESSION = [];
+            throw new ApiException("La contraseña cambió. Inicie sesión nuevamente", 1001, 401);
+        }
+        $_SESSION['credential'] = $fingerprint;
+        unset($user['password']);
         return $user;
     }
 
@@ -52,7 +59,7 @@ class Auth
         }
         $sent = $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
         if (empty($_SESSION['csrf']) || !hash_equals($_SESSION['csrf'], $sent)) {
-            throw new ApiException("Token de seguridad inválido, recargue la página", 1004, 419);
+            throw new ApiException("Token de seguridad inválido, recargue la página", 1004, 403);
         }
     }
 }

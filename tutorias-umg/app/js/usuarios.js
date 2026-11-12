@@ -96,4 +96,14 @@ function cambiarEstado(codigo) {
 $('#f-buscar').addEventListener('input', cargarUsuarios);
 $('#f-rol').addEventListener('change', cargarUsuarios);
 
-iniciarPanel(['admin']).then((user) => { if (user) cargarUsuarios(); });
+iniciarPanel(['admin']).then((user) => { if (user) { cargarUsuarios(); cargarRecuperaciones(); } });
+
+async function cargarRecuperaciones(){
+ let box=$('#recuperaciones');if(!box){box=document.createElement('section');box.id='recuperaciones';box.className='grupo';$('#tabla').before(box);}
+ try{const j=await api('usuarios.php?accion=recuperaciones');box.innerHTML='<h2>Solicitudes de recuperación de contraseña</h2><p>Verifique la identidad presencialmente antes de asignar una contraseña temporal.</p>'+ (j.data.length?j.data.map(r=>`<article class="day-appointment"><strong>${esc(r.nombre)}</strong><p>${esc(r.usuario)} · ${esc(r.correo)}<br>${esc(r.fecha)}</p><button class="btn btn-navy" onclick="resolverRecuperacion(${r.id})">Asignar contraseña temporal</button></article>`).join(''):'<p>No hay solicitudes pendientes.</p>');}catch(e){box.textContent=e.message;}
+}
+async function resolverRecuperacion(id){
+ const nueva=await messageBox({title:'Contraseña temporal (8 a 72 bytes)',input:true,cancel:true,required:true});if(nueva===null)return;
+ if(!await confirmar('¿Verificó la identidad del titular y desea asignar esta contraseña para entregarla en persona?'))return;
+ await ejecutar(()=>api(`usuarios.php?accion=recuperaciones&id=${id}`,'PUT',{nueva,confirmacion:nueva}),cargarRecuperaciones);
+}

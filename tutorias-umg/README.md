@@ -13,7 +13,7 @@
 1. Copiar la carpeta `tutorias-umg` dentro de `C:\xampp\htdocs\`.
 2. Encender **Apache** y **MySQL** en el panel de XAMPP.
 3. En phpMyAdmin → pestaña **Importar**: primero `database/database.sql`, luego `database/datos-prueba.sql`.
-4. Abrir **http://localhost/tutorias-umg/app/** (página de inicio pública; desde ahí se inicia sesión o se crea cuenta)
+4. Abrir **http://localhost/proyecto/tutorias-umg/app/** (página de inicio pública; desde ahí se inicia sesión o se crea cuenta)
 
 Si MySQL tiene contraseña o usa otro puerto, ajustar `api/.env`.
 
@@ -78,6 +78,72 @@ se edita el archivo y se recarga el navegador.
 
 - [x] Fase 1–2: análisis, modelo de datos, API base, login y sesiones
 - [x] Fase 3: CRUD de usuarios, tutorías y bloques; filtros
-- [ ] Fase 4: solicitudes — crear, listar y cancelar listos; falta aceptar / rechazar / registrar atención
-- [ ] Fase 5: panel de indicadores
+- [x] Fase 4: solicitudes — crear, listar, cancelar, aceptar, rechazar y registrar atención
+- [x] Fase 5: resumen de solicitudes por estado y por rol
 - [ ] Fase 6: guía visual definitiva
+
+## Actualización de entrega (11 de noviembre de 2026)
+
+La versión de entrega es `app/` (HTML y JavaScript). No requiere Node ni compilación.
+`frontend/` contiene una versión React alternativa; no ejecutar su build sobre `app/`.
+La ruta anterior asume el repositorio en `C:\xampp\htdocs\proyecto`.
+Cree `api/.env` copiando `api/.env.example` y configure MySQL. El script
+`database.sql` elimina la base existente: úselo únicamente para una instalación nueva.
+
+### Seguridad y cuenta
+- Mi cuenta permite cambiar contraseña verificando la actual, confirmación y longitud de 8 a 72 bytes.
+- Las otras sesiones se invalidan en la siguiente petición después de cambiar contraseña.
+- Sesión por cookie HttpOnly/SameSite=Lax; Secure con HTTPS. Inactividad: 30 minutos; máximo: 8 horas.
+- Login, registro y cambio de contraseña: 30 peticiones por IP y acción cada 15 minutos.
+- CSRF en operaciones autenticadas, consultas preparadas, errores controlados y archivos sensibles bloqueados en Apache.
+- Las escrituras usan un bloqueo MySQL de aplicación para impedir carreras en reservas.
+- Solo el tutor propietario o coordinación acepta/rechaza/registra atención.
+- Aceptar reserva un bloque para un estudiante y rechaza sus otros aplicantes pendientes.
+- Registrar atención requiere observaciones y que el horario haya terminado.
+- Cancelar solicitudes solo antes del inicio; no se edita disponibilidad con solicitudes activas.
+- Las desactivaciones con solicitudes activas se bloquean para conservar consistencia.
+
+### Verificación
+Se ejecutó el flujo HTTP real de los tres roles: creación y asignación de tutoría,
+publicación, solicitud, aceptación, cancelación, rechazo y atención, junto con casos
+negativos de permisos, CSRF, duplicados, traslapes y enlaces inválidos.
+Se cambió y restauró la contraseña en los tres roles usando datos temporales de prueba.
+La atención pasada se verificó con un bloque temporal controlado, sin cambiar registros originales.
+
+Para la defensa, preparar datos futuros y grabar el video del funcionamiento. HTTPS,
+actualizaciones del servidor y copias de seguridad son tareas del despliegue; estos
+controles no constituyen una garantía de inmunidad frente a ataques.
+
+## Recuperación de contraseña y diálogos
+
+El acceso incluye **Olvidé mi contraseña**. Se envía un enlace al correo registrado,
+con token aleatorio de un solo uso, hash en BD y vencimiento de 30 minutos. Las
+respuestas no revelan si existe una cuenta. Restablecer invalida las sesiones anteriores.
+
+En instalaciones existentes ejecutar `database/migracion-recuperacion.sql` (ya aplicada
+en este equipo). La instalación nueva incluye la tabla en `database.sql`.
+
+Sin servicio de correo: `MAIL_TRANSPORT=file` guarda los correos de prueba en
+`dam-mail` dentro de la carpeta que devuelve PHP `sys_get_temp_dir()` (fuera del sitio).
+Este transporte funciona solo para solicitudes desde localhost. El operador local
+puede abrir el archivo y copiar el enlace al navegador para demostrar el flujo.
+No se devuelve el enlace por la API ni se muestra al solicitante anónimo.
+
+Para correo real configurar el transporte de PHP, `MAIL_TRANSPORT=mail`,
+`MAIL_FROM` con un remitente autorizado y `APP_URL` con la URL HTTPS del sistema.
+El titular de la cuenta es el destinatario; no se suplanta su dirección como remitente.
+No hay envío real hasta configurar ese servicio. Eliminar periódicamente los correos
+locales de prueba porque contienen enlaces temporales de acceso.
+
+Los mensajes y confirmaciones de la aplicación usan diálogos propios, no alertas
+del navegador. Los días del calendario son botones accesibles y muestran las
+solicitudes de esa fecha según los filtros y permisos del rol conectado.
+
+## Propuestas de catedráticos
+El profesor puede crear tutorías desde Tutorías y propuestas. Se guardan con
+status=2 (pendiente), asignadas al profesor creador. Solo coordinación puede
+aprobarlas (status=1) o rechazarlas (status=0). Hasta aprobar no se muestran a
+estudiantes ni permiten publicar disponibilidad. La API comprueba estos permisos.
+No requiere migración: status ya es un entero. Las tutorías originales no cambian.
+
+Los registros PRUEBA se conservaron para demostración; ver tests/SIMULACION.md.

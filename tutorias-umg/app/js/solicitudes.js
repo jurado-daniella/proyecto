@@ -37,10 +37,11 @@ function pintarTabla() {
     }
     // Fase 4: el catedrático acepta o rechaza
     if (!esEstudiante && s.estado === 'pendiente') {
-      acciones += `<button class="icon-btn ok" type="button" title="Aceptar">✔</button>
-                   <button class="icon-btn no" type="button" title="Rechazar">✖</button>`;
+      acciones += `<button class="icon-btn ok" type="button" title="Aceptar" onclick="event.stopPropagation(); cambiarEstadoSolicitud(${s.codigo}, 'aceptar')">✔</button>
+                   <button class="icon-btn no" type="button" title="Rechazar" onclick="event.stopPropagation(); cambiarEstadoSolicitud(${s.codigo}, 'rechazar')">✖</button>`;
     }
-    if (s.estado !== 'pendiente' && !s.enlace) acciones = '<span class="muted">—</span>';
+    if (!esEstudiante && s.estado === 'aceptada') acciones += `<button class="btn btn-sm" onclick="event.stopPropagation(); cambiarEstadoSolicitud(${s.codigo}, 'atender')">Registrar atención</button>`;
+    acciones += `<button class="btn btn-sm" onclick="event.stopPropagation(); verSolicitud(${s.codigo})">Detalle</button>`;
 
     html += `
       <tr class="${seleccionada === s.codigo ? 'selected' : ''}" onclick="seleccionar(${s.codigo})" style="cursor:pointer">
@@ -85,11 +86,11 @@ $('#form-filtros').addEventListener('submit', (e) => {
   cargarSolicitudes();
 });
 
-function cancelarSolicitud() {
+async function cancelarSolicitud() {
   let actual = filas.find((s) => s.codigo === seleccionada);
   if (!actual) return mostrarMensaje('Seleccione una solicitud de la tabla');
   if (!['pendiente', 'aceptada'].includes(actual.estado)) return mostrarMensaje('Esa solicitud ya no se puede cancelar');
-  if (!confirm('¿Seguro que desea cancelar la solicitud seleccionada?')) return;
+  if (!await confirmar('¿Seguro que desea cancelar la solicitud seleccionada?')) return;
   ejecutar(() => api(`solicitudes.php?id=${actual.codigo}&accion=cancelar`, 'PUT'), cargarSolicitudes);
 }
 
@@ -130,7 +131,7 @@ function pintarCalendario() {
       : '';
     let tooltip = delDia.map((s) => `${s.hora_inicio} ${s.tutoria} (${s.estado})`).join('\n');
 
-    html += `<span class="${clase}" ${tooltip ? `title="${esc(tooltip)}"` : ''}>${dia.getDate()}${puntos}</span>`;
+    html += `<button type="button" class="${clase}" data-date="${iso}" aria-label="${iso}: ${delDia.length} tutorías" ${tooltip ? `title="${esc(tooltip)}"` : ''}>${dia.getDate()}${puntos}</button>`;
   }
   $('#calendario').innerHTML = html;
 }
@@ -150,4 +151,19 @@ iniciarPanel().then(async (user) => {
 
   let tutorias = (await api('tutorias.php')).data;
   $('#f-tutoria').innerHTML += tutorias.map((t) => `<option value="${t.codigo}">${esc(t.curso)}</option>`).join('');
+});
+
+async function cambiarEstadoSolicitud(id, accion) {
+ let observaciones='';
+ if(accion==='atender' || accion==='rechazar') { observaciones=await messageBox({title:accion==='atender'?'Registrar atención':'Motivo del rechazo (opcional)',input:true,cancel:true,required:accion==='atender'}); if(observaciones===null)return; }
+ if(!await confirmar('¿Confirmar '+accion+' solicitud?'))return;
+ await ejecutar(()=>api(`solicitudes.php?id=${id}&accion=${accion}`,'PUT',{observaciones}),cargarSolicitudes);
+}
+function verSolicitud(id) {const s=solicitudes.find(x=>x.codigo===id); if(s)informar(`${s.estudiante}\n${s.tutoria}\n${s.tutor}\n${s.fecha} ${s.hora_inicio}–${s.hora_fin}\nEstado: ${s.estado}\nObservaciones: ${s.observaciones||'Sin observaciones'}`);}
+
+$('#calendario').addEventListener('click', e=>{
+ const day=e.target.closest('[data-date]');if(!day)return;
+ const rows=solicitudes.filter(s=>s.fecha===day.dataset.date).sort((a,b)=>a.hora_inicio.localeCompare(b.hora_inicio));
+ const html=rows.length?rows.map(s=>`<article class="day-appointment"><h3>${esc(s.tutoria)}</h3><p>${esc(s.hora_inicio)} – ${esc(s.hora_fin)} · ${badge(s.estado)}</p><p>Catedrático: ${esc(s.tutor)}<br>Estudiante: ${esc(s.estudiante)}</p>${s.observaciones?`<p>${esc(s.observaciones)}</p>`:''}${s.enlace?`<a class="btn btn-sm" target="_blank" rel="noopener noreferrer" href="${esc(s.enlace)}">Unirse</a>`:''}</article>`).join(''):'<p>No hay tutorías registradas para este día con los filtros actuales.</p>';
+ messageBox({title:'Tutorías del '+ddmmyyyy(day.dataset.date),html});
 });

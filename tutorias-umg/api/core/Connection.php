@@ -13,6 +13,10 @@ class Connection extends PDO
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
                 PDO::ATTR_EMULATE_PREPARES => false,
             ]);
+            // Serializa escrituras del sistema para validar y guardar sin carreras.
+            if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'GET') {
+                if ((int)$this->query("SELECT GET_LOCK('tutorias_umg_write', 10)")->fetchColumn() !== 1) throw new ApiException("Sistema ocupado; intente nuevamente", 1009, 503);
+            }
         } catch (PDOException $e) {
             error_log($e->getMessage());
             // Mensaje según el código de MySQL, sin exponer credenciales

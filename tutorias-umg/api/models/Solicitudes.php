@@ -38,7 +38,7 @@ class Solicitudes
             $params['tutoria'] = (int) $filters['tutoria'];
         }
 
-        $query = "SELECT s.id AS codigo, s.status AS estado, s.created_at AS fecha_solicitud,
+        $query = "SELECT s.id AS codigo, s.notes AS observaciones, s.status AS estado, s.created_at AS fecha_solicitud,
                          b.id AS bloque_codigo, b.date AS fecha, TIME_FORMAT(b.start_time, '%H:%i') AS hora_inicio,
                          TIME_FORMAT(b.end_time, '%H:%i') AS hora_fin,
                          CASE WHEN s.status IN ('aceptada', 'atendida') THEN b.link END AS enlace,
@@ -67,7 +67,7 @@ class Solicitudes
         $statement = $this->connection->prepare(
             "SELECT b.id, b.date, b.start_time, b.end_time, b.status
              FROM bloques b INNER JOIN tutorias t ON t.id = b.tutoria_id
-             WHERE b.id = :id AND t.status = 1"
+             WHERE b.id = :id AND t.status = 1 AND EXISTS (SELECT 1 FROM usuarios u WHERE u.id=b.tutor_id AND u.status=1 AND u.role='tutor')"
         );
         $statement->execute(['id' => $blockId]);
         $block = $statement->fetch();
@@ -129,7 +129,7 @@ class Solicitudes
     function cancel(int $id, int $studentId): void
     {
         $statement = $this->connection->prepare(
-            "SELECT id, block_id, status FROM solicitudes WHERE id = :id AND student_id = :student"
+            "SELECT s.id, s.block_id, s.status, b.date, b.start_time FROM solicitudes s JOIN bloques b ON b.id=s.block_id WHERE s.id = :id AND s.student_id = :student"
         );
         $statement->execute(['id' => $id, 'student' => $studentId]);
         $request = $statement->fetch();
@@ -141,6 +141,7 @@ class Solicitudes
             throw new ApiException("La solicitud ya no se puede cancelar", 5011, 409);
         }
 
+        if (new DateTime($request['date'].' '.$request['start_time']) <= new DateTime()) throw new ApiException('El horario ya inició; no se puede cancelar', 5011, 409);
         $this->connection->beginTransaction();
         try {
             $statement = $this->connection->prepare("UPDATE solicitudes SET status = 'cancelada' WHERE id = :id");
@@ -158,5 +159,32 @@ class Solicitudes
         }
     }
 
-    // TODO fase 4: aceptar (rechaza las demás pendientes y reserva el bloque), rechazar y registrar atención.
+    function transition(int $id, string $action, array $user, array $data): void
+    {
+        if (!in_array($user['role'], ['admin', 'tutor'], true)) throw new ApiException("Sin permisos", 1003, 403);
+        $notes = trim((string) ($data['observaciones'] ?? ''));
+        if (mb_strlen($notes) > 4000 || ($action === 'atender' && $notes === '')) throw new ApiException("Registre observaciones (máximo 4000 caracteres)", 1002, 422);
+        $this->connection->beginTransaction();
+        try {
+            $q = $this->connection->prepare('SELECT block_id FROM solicitudes WHERE id = ?');
+            $q->execute([$id]); $blockId = $q->fetchColumn();
+            if (!$blockId) throw new ApiException("Solicitud inexistente", 5010, 404);
+            $q = $this->connection->prepare('SELECT b.*, t.status AS active FROM bloques b JOIN tutorias t ON t.id=b.tutoria_id WHERE b.id=? FOR UPDATE');
+            $q->execute([$blockId]); $b = $q->fetch();
+            $q = $this->connection->prepare('SELECT * FROM solicitudes WHERE id=? FOR UPDATE');
+            $q->execute([$id]); $s = $q->fetch();
+            if ($user['role'] === 'tutor' && (int)$b['tutor_id'] !== (int)$user['id']) throw new ApiException("El bloque no le pertenece", 1003, 403);
+            $expected = $action === 'atender' ? 'aceptada' : 'pendiente';
+            if ($s['status'] !== $expected || $b['status'] === 'cancelado') throw new ApiException("El estado actual no permite esta acción", 5011, 409);
+            if ($action === 'aceptar') {
+                if ($b['status'] !== 'disponible' || !$b['active'] || new DateTime($b['date'].' '.$b['start_time']) <= new DateTime()) throw new ApiException("El bloque no está disponible o ya pasó", 5006, 409);
+                $q = $this->connection->prepare("UPDATE bloques SET status='reservado' WHERE id=?"); $q->execute([$blockId]);
+                $q = $this->connection->prepare("UPDATE solicitudes SET status='rechazada' WHERE block_id=? AND id<>? AND status='pendiente'"); $q->execute([$blockId, $id]);
+            }
+            if ($action === 'atender' && new DateTime($b['date'].' '.$b['end_time']) > new DateTime()) throw new ApiException("Registre la atención al finalizar el horario", 5011, 409);
+            $state = ['aceptar'=>'aceptada','rechazar'=>'rechazada','atender'=>'atendida'][$action];
+            $q = $this->connection->prepare('UPDATE solicitudes SET status=?, notes=? WHERE id=?'); $q->execute([$state, $notes ?: null, $id]);
+            $this->connection->commit();
+        } catch (Throwable $e) { $this->connection->rollBack(); throw $e; }
+    }
 }

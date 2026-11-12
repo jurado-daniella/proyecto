@@ -8,8 +8,12 @@ class Request
 {
     static function body(): array
     {
-        $data = json_decode(file_get_contents("php://input"), true);
-        return is_array($data) ? $data : [];
+        if ((int) ($_SERVER['CONTENT_LENGTH'] ?? 0) > 65536) throw new ApiException("Petición demasiado grande", 1002, 413);
+        $raw = file_get_contents("php://input");
+        if ($raw === '') return [];
+        $data = json_decode($raw, true);
+        if (json_last_error() !== JSON_ERROR_NONE || !is_array($data) || substr(ltrim($raw), 0, 1) !== '{') throw new ApiException("Se esperaba un objeto JSON válido", 1002, 400);
+        return $data;
     }
 
     /** Devuelve los campos obligatorios ya recortados o lanza error 422. */
@@ -18,7 +22,7 @@ class Request
         $clean = [];
         $missing = [];
         foreach ($fields as $field) {
-            $value = isset($data[$field]) && is_scalar($data[$field]) ? trim((string) $data[$field]) : '';
+            $value = isset($data[$field]) && is_scalar($data[$field]) ? (in_array($field, ['clave', 'confirmacion', 'actual', 'nueva'], true) ? (string) $data[$field] : trim((string) $data[$field])) : '';
             if ($value === '') {
                 $missing[] = $field;
             }
@@ -34,11 +38,13 @@ class Request
     static function intParam(string $name): ?int
     {
         $value = filter_input(INPUT_GET, $name, FILTER_VALIDATE_INT, ["options" => ["min_range" => 1]]);
+        if (isset($_GET[$name]) && !$value) throw new ApiException("Identificador inválido", 1002, 422);
         return $value ?: null;
     }
 
     static function param(string $name): ?string
     {
+        if (isset($_GET[$name]) && !is_string($_GET[$name])) throw new ApiException('Filtro inválido', 1002, 422);
         $value = trim($_GET[$name] ?? '');
         return $value === '' ? null : $value;
     }

@@ -22,7 +22,10 @@ class Tutorias
         $where = [];
         $params = [];
 
-        if ($onlyActive) {
+        if (!empty($filters['propuestas_de'])) {
+            $where[] = '(t.status = 1 OR t.created_by = :autor)';
+            $params['autor'] = (int)$filters['propuestas_de'];
+        } elseif ($onlyActive) {
             $where[] = "t.status = 1";
         }
         if (!empty($filters['curso'])) {
@@ -39,13 +42,13 @@ class Tutorias
         }
 
         // Los bloques disponibles cuentan solo los futuros para que el estudiante sepa si hay horarios
-        $query = "SELECT t.id AS codigo, t.title AS titulo, t.description AS descripcion, t.status AS estado,
+        $query = "SELECT t.id AS codigo, t.title AS titulo, t.description AS descripcion, t.created_by AS creador, t.status AS estado,
                          t.start_date AS fecha_inicio, t.end_date AS fecha_fin,
                          TIME_FORMAT(t.start_time, '%H:%i') AS hora_inicio, TIME_FORMAT(t.end_time, '%H:%i') AS hora_fin, t.days AS dias,
                          c.id AS curso_codigo, c.name AS curso, c.code AS curso_clave, c.cycle AS ciclo,
                          (SELECT COUNT(*) FROM tutoria_tutor tt WHERE tt.tutoria_id = t.id) AS total_tutores,
                          (SELECT COUNT(*) FROM bloques b
-                           WHERE b.tutoria_id = t.id AND b.status = 'disponible' AND b.date >= CURDATE()) AS bloques_disponibles
+                           WHERE b.tutoria_id = t.id AND b.status = 'disponible' AND TIMESTAMP(b.date,b.start_time) > NOW()) AS bloques_disponibles
                   FROM tutorias t
                   INNER JOIN cursos c ON c.id = t.course_id"
             . ($where ? " WHERE " . implode(" AND ", $where) : "")
@@ -59,7 +62,7 @@ class Tutorias
     function get(int $id): array
     {
         $statement = $this->connection->prepare(
-            "SELECT t.id AS codigo, t.title AS titulo, t.description AS descripcion, t.status AS estado,
+            "SELECT t.id AS codigo, t.title AS titulo, t.description AS descripcion, t.created_by AS creador, t.status AS estado,
                     t.start_date AS fecha_inicio, t.end_date AS fecha_fin,
                          TIME_FORMAT(t.start_time, '%H:%i') AS hora_inicio, TIME_FORMAT(t.end_time, '%H:%i') AS hora_fin, t.days AS dias,
                     c.id AS curso_codigo, c.name AS curso, c.code AS curso_clave
@@ -75,7 +78,7 @@ class Tutorias
         $statement = $this->connection->prepare(
             "SELECT u.id AS codigo, u.name AS nombre, u.email AS correo, u.avatar
              FROM tutoria_tutor tt INNER JOIN usuarios u ON u.id = tt.tutor_id
-             WHERE tt.tutoria_id = :id AND u.status = 1
+             WHERE tt.tutoria_id = :id AND u.status = 1 AND u.role = 'tutor'
              ORDER BY u.name"
         );
         $statement->execute(['id' => $id]);
@@ -94,10 +97,26 @@ class Tutorias
         return (int) $this->connection->lastInsertId();
     }
 
+    function propose(array $data, int $tutorId): int
+    {
+        $this->connection->beginTransaction();
+        try {
+            $id = $this->add($data, $tutorId);
+            $this->connection->prepare('UPDATE tutorias SET status=2 WHERE id=?')->execute([$id]);
+            $this->connection->prepare('INSERT INTO tutoria_tutor(tutoria_id,tutor_id) VALUES(?,?)')->execute([$id,$tutorId]);
+            $this->connection->commit();
+            return $id;
+        } catch(Throwable $e) {$this->connection->rollBack();throw $e;}
+    }
+
     function update(int $id, array $data): void
     {
         $this->get($id);
         $tutoria = $this->validate($data);
+        $q = $this->connection->prepare("SELECT date, start_time, end_time FROM bloques WHERE tutoria_id=? AND status<>'cancelado'"); $q->execute([$id]);
+        foreach ($q->fetchAll() as $b) {
+            if ($b['date'] < $tutoria['start_date'] || $b['date'] > $tutoria['end_date'] || $b['start_time'] < $tutoria['start_time'] || $b['end_time'] > $tutoria['end_time'] || !in_array((new DateTime($b['date']))->format('N'), explode(',', $tutoria['days']), true)) throw new ApiException("El nuevo rango excluye horarios existentes", 3015, 409);
+        }
         $statement = $this->connection->prepare(
             "UPDATE tutorias SET course_id = :course, title = :title, description = :description,
                     start_date = :start_date, end_date = :end_date, start_time = :start_time, end_time = :end_time, days = :days
@@ -109,6 +128,10 @@ class Tutorias
     function setStatus(int $id, int $status): void
     {
         $this->get($id);
+        if (!$status) {
+            $q = $this->connection->prepare("SELECT COUNT(*) FROM solicitudes s JOIN bloques b ON b.id=s.block_id WHERE b.tutoria_id=? AND s.status IN ('pendiente','aceptada')"); $q->execute([$id]);
+            if ($q->fetchColumn()) throw new ApiException("Resuelva las solicitudes activas antes de desactivar la tutoría", 3015, 409);
+        }
         $statement = $this->connection->prepare("UPDATE tutorias SET status = :status WHERE id = :id");
         $statement->execute(['status' => $status ? 1 : 0, 'id' => $id]);
     }
