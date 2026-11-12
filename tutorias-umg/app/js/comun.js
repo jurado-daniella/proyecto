@@ -122,7 +122,7 @@ const ROLES = { admin: 'Coordinación', tutor: 'Catedrático', estudiante: 'Estu
 // Menú por rol. El servidor vuelve a validar el rol en cada petición;
 // esto solo decide qué páginas mostrar.
 const MENU = {
-  admin: [ ['inicio.html', 'Inicio'], ['usuarios.html', 'Usuarios'], ['tutorias.html', 'Tutorías'], ['solicitudes.html', 'Solicitudes']],
+  admin: [['bitacora.html', 'Bitácora'], ['inicio.html', 'Inicio'], ['usuarios.html', 'Usuarios'], ['tutorias.html', 'Tutorías'], ['solicitudes.html', 'Solicitudes']],
   tutor: [['tutorias.html', 'Tutorías y propuestas'], ['inicio.html', 'Inicio'], ['bloques.html', 'Mis horarios'], ['solicitudes.html', 'Solicitudes']],
   estudiante: [['inicio.html', 'Inicio'], ['explorar.html', 'Buscar tutorías'], ['solicitudes.html', 'Mis solicitudes']],
 };

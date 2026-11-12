@@ -95,18 +95,6 @@ CREATE TABLE solicitudes (
     INDEX idx_solicitudes_status (status)
 );
 
-CREATE TABLE IF NOT EXISTS password_resets (
- id INT AUTO_INCREMENT PRIMARY KEY,
- user_id INT NOT NULL,
- token_hash CHAR(64) NOT NULL UNIQUE,
- credential CHAR(64) NOT NULL,
- expires_at DATETIME NOT NULL,
- used_at DATETIME NULL,
- created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
- FOREIGN KEY (user_id) REFERENCES usuarios(id),
- INDEX idx_reset_expiry (expires_at)
-);
-
 CREATE TABLE IF NOT EXISTS recuperaciones_admin (id INT AUTO_INCREMENT PRIMARY KEY,user_id INT NOT NULL,estado ENUM('pendiente','resuelta') NOT NULL DEFAULT 'pendiente',created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,resolved_at DATETIME NULL,resolved_by INT NULL,FOREIGN KEY(user_id) REFERENCES usuarios(id),FOREIGN KEY(resolved_by) REFERENCES usuarios(id));
 CREATE TABLE IF NOT EXISTS bitacora (
  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,

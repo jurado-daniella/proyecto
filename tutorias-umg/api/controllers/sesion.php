@@ -29,8 +29,6 @@ try {
 
         case 'POST':
             if (in_array($action, ['recuperar','restablecer'], true)) {
-                require_once __DIR__.'/../models/Recuperacion.php';
-                $recovery = new Recuperacion($connection);
                 if ($action === 'recuperar') {
                     $data=Request::required(Request::body(), ['correo']);
                     if (!filter_var($data['correo'],FILTER_VALIDATE_EMAIL)) throw new ApiException('Ingrese un correo válido',1002,422);
@@ -38,9 +36,6 @@ try {
                     Response::success('Si el correo corresponde a una cuenta activa, coordinación recibirá la solicitud. Acuda en persona para verificar su identidad y recibir una contraseña temporal.');
                 }
                 throw new ApiException('La recuperación ahora se realiza personalmente con coordinación',1002,410);
-                $_SESSION=[];
-                session_regenerate_id(true);
-                Response::success('Contraseña restablecida. Inicie sesión con su nueva contraseña.');
             }
             if ($action === 'login') {
                 $data = Request::required(Request::body(), ['usuario', 'clave']);
