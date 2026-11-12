@@ -151,7 +151,8 @@ Los registros PRUEBA se conservaron para demostración; ver tests/SIMULACION.md.
 ## Bitácora
 Ejecutar `database/migracion-bitacora.sql` en instalaciones existentes; ya aplicada
 localmente. Las nuevas instalaciones incluyen la tabla en `database.sql`.
-Coordinación consulta Bitácora desde su menú y filtra fecha, resultado o texto.
+La bitácora se consulta únicamente en la tabla `bitacora` desde phpMyAdmin.
+No hay pantalla ni endpoint de consulta en la aplicación.
 Registra peticiones de escritura completadas y rechazadas, accesos y cierres de
 sesión. No almacena cuerpos HTTP, contraseñas, cookies ni tokens. Solo registra
 operaciones desde su activación, no reconstruye cambios anteriores ni cambios
