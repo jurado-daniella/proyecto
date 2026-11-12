@@ -1,2 +1,0 @@
-USE tutorias_umg;
-ALTER TABLE bitacora ADD COLUMN solicitud_id CHAR(32) NULL, ADD COLUMN ip_origen VARCHAR(45) NULL, ADD COLUMN detalle TEXT NULL, ADD COLUMN cambios LONGTEXT NULL;
