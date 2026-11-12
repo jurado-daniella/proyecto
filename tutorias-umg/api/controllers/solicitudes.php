@@ -43,7 +43,8 @@ try {
                 Response::success("Solicitud cancelada");
             }
             if (in_array($action, ['aceptar', 'rechazar', 'atender'], true)) {
-                Response::error("Funcionalidad en desarrollo (fase 4)", 5013, 501);
+                $model->transition($id, $action, $user, Request::body());
+                Response::success("Solicitud actualizada");
             }
             Response::error("Acción no válida", 1007, 400);
             break;

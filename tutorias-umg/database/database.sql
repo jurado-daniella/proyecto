@@ -94,3 +94,22 @@ CREATE TABLE solicitudes (
     FOREIGN KEY (student_id) REFERENCES usuarios(id),
     INDEX idx_solicitudes_status (status)
 );
+
+CREATE TABLE IF NOT EXISTS recuperaciones_admin (id INT AUTO_INCREMENT PRIMARY KEY,user_id INT NOT NULL,estado ENUM('pendiente','resuelta') NOT NULL DEFAULT 'pendiente',created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,resolved_at DATETIME NULL,resolved_by INT NULL,FOREIGN KEY(user_id) REFERENCES usuarios(id),FOREIGN KEY(resolved_by) REFERENCES usuarios(id));
+CREATE TABLE IF NOT EXISTS bitacora (
+ id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+ usuario_id INT NULL,
+ usuario_nombre VARCHAR(120) NULL,
+ recurso VARCHAR(60) NOT NULL,
+ accion VARCHAR(60) NOT NULL,
+ metodo VARCHAR(10) NOT NULL,
+ registro_id INT NULL,
+ resultado ENUM('correcto','rechazado') NOT NULL,
+ http_status SMALLINT NOT NULL,
+ fecha TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ FOREIGN KEY(usuario_id) REFERENCES usuarios(id) ON DELETE SET NULL,
+ INDEX idx_bitacora_fecha(fecha), INDEX idx_bitacora_usuario(usuario_id)
+);
+
+
+ALTER TABLE bitacora ADD COLUMN solicitud_id CHAR(32) NULL, ADD COLUMN ip_origen VARCHAR(45) NULL, ADD COLUMN detalle TEXT NULL, ADD COLUMN cambios LONGTEXT NULL;

@@ -25,7 +25,10 @@ async function api(ruta, metodo = 'GET', datos = null) {
   } catch {
     throw new Error('El servidor no respondió correctamente. ¿Está encendido XAMPP?');
   }
-  if (!request.ok) throw new Error(response.message || 'Error inesperado');
+  if (!request.ok) {
+    if (request.status === 401 && usuario) { location.href = 'login.html'; }
+    throw new Error(response.message || 'Error inesperado');
+  }
   return response;
 }
 
@@ -53,7 +56,8 @@ function alerta(texto, tipo = 'error') {
 }
 
 function mostrarMensaje(texto, tipo = 'error') {
-  $('#mensajes').innerHTML = texto ? alerta(texto, tipo) : '';
+  if ($('#mensajes')) $('#mensajes').innerHTML = texto ? alerta(texto, tipo) : '';
+  if (texto) messageBox({title:tipo === 'success' ? 'Operación completada' : 'Revise la información',text:texto});
 }
 
 // Ejecuta una petición que cambia datos y muestra el mensaje que devuelve la API
@@ -118,8 +122,8 @@ const ROLES = { admin: 'Coordinación', tutor: 'Catedrático', estudiante: 'Estu
 // Menú por rol. El servidor vuelve a validar el rol en cada petición;
 // esto solo decide qué páginas mostrar.
 const MENU = {
-  admin: [['inicio.html', 'Inicio'], ['usuarios.html', 'Usuarios'], ['tutorias.html', 'Tutorías'], ['solicitudes.html', 'Solicitudes']],
-  tutor: [['inicio.html', 'Inicio'], ['bloques.html', 'Mis horarios'], ['solicitudes.html', 'Solicitudes']],
+  admin: [['bitacora.html', 'Bitácora'], ['inicio.html', 'Inicio'], ['usuarios.html', 'Usuarios'], ['tutorias.html', 'Tutorías'], ['solicitudes.html', 'Solicitudes']],
+  tutor: [['tutorias.html', 'Tutorías y propuestas'], ['inicio.html', 'Inicio'], ['bloques.html', 'Mis horarios'], ['solicitudes.html', 'Solicitudes']],
   estudiante: [['inicio.html', 'Inicio'], ['explorar.html', 'Buscar tutorías'], ['solicitudes.html', 'Mis solicitudes']],
 };
 
@@ -140,6 +144,7 @@ async function iniciarPanel(rolesPermitidos) {
     return null;
   }
 
+  if (!MENU[usuario.role].some(([url]) => url === 'perfil.html')) MENU[usuario.role].push(['perfil.html', 'Mi cuenta']);
   let pagina = location.pathname.split('/').pop() || 'inicio.html';
   let enlaces = MENU[usuario.role]
     .map(([url, texto]) => `<a href="${url}" class="${url === pagina ? 'active' : ''}">${texto}</a>`)
@@ -165,3 +170,23 @@ async function salir() {
   }
   location.href = 'index.html';
 }
+
+// Diálogos propios: texto seguro, navegación por teclado y retorno del foco.
+let dialogQueue = Promise.resolve();
+function messageBox({title='DAM · Tutorías', text='', html='', input=false, cancel=false, required=false}={}) {
+ const job=()=>new Promise(resolve=>{
+  const previous=document.activeElement, d=document.createElement('dialog');d.className='message-box';d.setAttribute('aria-labelledby','dam-dialog-title');
+  d.innerHTML=`<form><header><h2 id="dam-dialog-title"></h2></header><div class="message-content"></div>${input?'<label class="message-input">Observaciones<textarea maxlength="4000" rows="4"></textarea></label>':''}<footer>${cancel?'<button type="button" class="btn" data-cancel>Cancelar</button>':''}<button class="btn btn-navy" type="submit">${input?'Guardar':'Aceptar'}</button></footer></form>`;
+  d.querySelector('h2').textContent=title;
+  const content=d.querySelector('.message-content');if(html)content.innerHTML=html;else content.textContent=text;
+  const field=d.querySelector('textarea');if(field)field.required=required;
+  const finish=value=>{d.close();d.remove();previous?.focus();resolve(value);};
+  d.querySelector('form').addEventListener('submit',e=>{e.preventDefault();finish(input?field.value:true);});
+  d.querySelector('[data-cancel]')?.addEventListener('click',()=>finish(input?null:false));
+  d.addEventListener('cancel',e=>{e.preventDefault();finish(input?null:false);});
+  document.body.append(d);d.showModal();(field||d.querySelector('button[type="submit"]')).focus();
+ });
+ const result=dialogQueue.then(job);dialogQueue=result.catch(()=>{});return result;
+}
+const confirmar = text => messageBox({title:'Confirmar acción',text,cancel:true});
+const informar = text => messageBox({title:'Información',text});

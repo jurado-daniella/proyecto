@@ -15,7 +15,7 @@ try {
     $action = Request::param('accion');
 
     // Lectura: cualquier usuario autenticado. Escritura: solo admin.
-    if ($method !== 'GET' && $user['role'] !== 'admin') {
+    if ($method !== 'GET' && $user['role'] !== 'admin' && !($method === 'POST' && $user['role'] === 'tutor')) {
         Response::error("No tiene permisos para esta acción", 1003, 403);
     }
 
@@ -25,9 +25,12 @@ try {
                 Response::success("Cursos obtenidos", $model->getCourses());
             }
             if ($id) {
-                Response::success("Tutoría obtenida", $model->get($id));
+                $detail=$model->get($id);
+                if ($user['role'] !== 'admin' && (int)$detail['estado'] !== 1 && !($user['role'] === 'tutor' && (int)$detail['creador'] === (int)$user['id'])) throw new ApiException('Tutoría no disponible',3005,404);
+                Response::success("Tutoría obtenida", $detail);
             }
             $filters = [
+                'propuestas_de' => $user['role'] === 'tutor' && $action === 'propuestas' ? $user['id'] : null,
                 'curso' => Request::param('curso'),
                 'tutor' => Request::param('tutor'),
                 'buscar' => Request::param('buscar'),
@@ -36,8 +39,8 @@ try {
             break;
 
         case 'POST':
-            $newId = $model->add(Request::body(), $user['id']);
-            Response::success("Tutoría creada correctamente", ['codigo' => $newId], 1, 201);
+            $newId = $user['role'] === 'tutor' ? $model->propose(Request::body(), $user['id']) : $model->add(Request::body(), $user['id']);
+            Response::success($user['role'] === 'tutor' ? "Propuesta enviada a coordinación para aprobación" : "Tutoría creada correctamente", ['codigo' => $newId], 1, 201);
             break;
 
         case 'PUT':

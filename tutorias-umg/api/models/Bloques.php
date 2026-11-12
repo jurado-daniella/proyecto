@@ -26,7 +26,7 @@ class Bloques
             $params['me'] = $user['id'];
         }
         if ($user['role'] === 'estudiante') {
-            $where[] = "b.status = 'disponible' AND t.status = 1";
+            $where[] = "b.status = 'disponible' AND t.status = 1 AND u.status = 1 AND u.role = 'tutor'";
             $where[] = "(b.date > CURDATE() OR (b.date = CURDATE() AND b.start_time > CURTIME()))";
         }
         if (!empty($filters['tutoria'])) {
@@ -101,6 +101,9 @@ class Bloques
             throw new ApiException("Solo se pueden modificar bloques disponibles", 4006, 409);
         }
 
+        $q = $this->connection->prepare("SELECT COUNT(*) FROM solicitudes WHERE block_id=? AND status IN ('pendiente','aceptada')");
+        $q->execute([$id]);
+        if ($q->fetchColumn()) throw new ApiException("No se puede editar un horario con solicitudes activas", 4006, 409);
         $block = $this->validate($data, $tutorId);
         $this->checkOverlap($tutorId, $block['date'], $block['start'], $block['end'], $id);
 
@@ -166,7 +169,7 @@ class Bloques
         if ($start <= new DateTime()) {
             throw new ApiException("No se pueden publicar bloques en el pasado", 4013, 422);
         }
-        if (!filter_var($block['enlace'], FILTER_VALIDATE_URL) || !preg_match('#^https?://#i', $block['enlace'])) {
+        if (strlen($block['enlace']) > 255 || !filter_var($block['enlace'], FILTER_VALIDATE_URL) || !preg_match('#^https?://#i', $block['enlace'])) {
             throw new ApiException("El enlace de la reunión no es válido", 4014, 422);
         }
 

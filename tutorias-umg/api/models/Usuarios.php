@@ -113,7 +113,7 @@ class Usuarios
 
     function update(int $id, array $data, int $currentUserId): void
     {
-        $this->get($id);
+        $previous = $this->get($id);
         $user = Request::required($data, ['usuario', 'nombre', 'correo', 'rol']);
         $this->validate($user);
 
@@ -121,6 +121,12 @@ class Usuarios
             throw new ApiException("No puede quitarse a sí mismo el rol de administrador", 2006, 409);
         }
 
+        if ($previous['rol'] !== $user['rol']) {
+            $q = $this->connection->prepare('SELECT COUNT(*) FROM tutoria_tutor WHERE tutor_id=?'); $q->execute([$id]);
+            if ($q->fetchColumn()) throw new ApiException("No cambie el rol de un catedrático asignado", 2006, 409);
+            $q = $this->connection->prepare("SELECT COUNT(*) FROM solicitudes WHERE student_id=? AND status IN ('pendiente','aceptada')"); $q->execute([$id]);
+            if ($q->fetchColumn()) throw new ApiException("El usuario tiene solicitudes activas", 2006, 409);
+        }
         $params = [
             'id' => $id,
             'username' => $user['usuario'],
@@ -150,13 +156,17 @@ class Usuarios
         if ($id === $currentUserId) {
             throw new ApiException("No puede desactivar su propia cuenta", 2007, 409);
         }
+        if (!$status) {
+            $q = $this->connection->prepare("SELECT COUNT(*) FROM solicitudes s JOIN bloques b ON b.id=s.block_id WHERE (s.student_id=? OR b.tutor_id=?) AND s.status IN ('pendiente','aceptada')"); $q->execute([$id,$id]);
+            if ($q->fetchColumn()) throw new ApiException("Resuelva las solicitudes activas antes de desactivar la cuenta", 2007, 409);
+        }
         $statement = $this->connection->prepare("UPDATE usuarios SET status = :status WHERE id = :id");
         $statement->execute(['status' => $status ? 1 : 0, 'id' => $id]);
     }
 
     private function validate(array $user): void
     {
-        if (!filter_var($user['correo'], FILTER_VALIDATE_EMAIL)) {
+        if (strlen($user['correo']) > 120 || !filter_var($user['correo'], FILTER_VALIDATE_EMAIL)) {
             throw new ApiException("El correo no es válido", 2008, 422);
         }
         if (!in_array($user['rol'], self::ROLES, true)) {
@@ -169,8 +179,8 @@ class Usuarios
 
     private function validatePassword(string $password): void
     {
-        if (strlen($password) < 8) {
-            throw new ApiException("La contraseña debe tener al menos 8 caracteres", 2011, 422);
+        if (strlen($password) < 8 || strlen($password) > 72) {
+            throw new ApiException("La contraseña debe tener entre 8 y 72 bytes", 2011, 422);
         }
     }
 

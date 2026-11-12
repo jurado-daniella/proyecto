@@ -12,7 +12,7 @@ $('#dias').innerHTML = DIAS
 async function cargarTutorias() {
   $('#tabla').innerHTML = CARGANDO;
   try {
-    let response = await api(`tutorias.php?${filtros({ buscar: $('#f-buscar').value, curso: $('#f-curso').value })}`);
+    let response = await api(`tutorias.php?${usuario.role === 'tutor' ? 'accion=propuestas&' : ''}${filtros({ buscar: $('#f-buscar').value, curso: $('#f-curso').value })}`);
     tutorias = response.data;
     pintarTabla();
   } catch (error) {
@@ -38,11 +38,14 @@ function pintarTabla() {
         </td>
         <td>${t.total_tutores}</td>
         <td>${t.bloques_disponibles}</td>
-        <td>${badge(t.estado)}</td>
+        <td>${Number(t.estado) === 2 ? '<span class="badge badge-pendiente">Pendiente de aprobación</span>' : badge(t.estado)}</td>
         <td class="actions">
+          ${usuario.role === 'admin' ? `
           <button class="btn btn-sm" onclick="editarTutoria(${t.codigo})">Editar</button>
           <button class="btn btn-sm" onclick="abrirAsignar(${t.codigo})">Catedráticos</button>
-          <button class="btn btn-sm" onclick="cambiarEstado(${t.codigo})">${t.estado ? 'Desactivar' : 'Activar'}</button>
+          <button class="btn btn-sm" onclick="cambiarEstado(${t.codigo})">${Number(t.estado) === 2 ? 'Aprobar propuesta' : t.estado ? 'Desactivar' : 'Activar'}</button>
+          ${Number(t.estado) === 2 ? `<button class="btn btn-sm" onclick="rechazarPropuesta(${t.codigo})">Rechazar propuesta</button>` : ''}
+          ` : '<span class="muted">Gestionado por coordinación</span>'}
         </td>
       </tr>`;
   });
@@ -130,7 +133,7 @@ formAsignar.addEventListener('submit', (e) => {
 
 function cambiarEstado(codigo) {
   let t = tutorias.find((x) => x.codigo === codigo);
-  ejecutar(() => api(`tutorias.php?id=${codigo}&accion=estado`, 'PUT', { estado: t.estado ? 0 : 1 }), cargarTutorias);
+  ejecutar(() => api(`tutorias.php?id=${codigo}&accion=estado`, 'PUT', { estado: Number(t.estado) === 2 ? 1 : t.estado ? 0 : 1 }), cargarTutorias);
 }
 
 // Cursos del pensum (para el formulario y el filtro) y catedráticos activos (para asignar)
@@ -141,6 +144,7 @@ async function cargarListas() {
     .join('');
   $('#f-curso').innerHTML += cursos.map((c) => `<option value="${c.codigo}">${esc(c.nombre)}</option>`).join('');
 
+  if (usuario.role !== 'admin') return;
   let tutores = (await api('usuarios.php?rol=tutor&estado=1')).data;
   $('#lista-tutores').innerHTML = '<legend class="sr-only">Catedráticos</legend>' + tutores
     .map((t) => `<label class="check"><input type="checkbox" name="tutores" value="${t.codigo}">${avatar(t.avatar, t.nombre)}${esc(t.nombre)}</label>`)
@@ -150,8 +154,10 @@ async function cargarListas() {
 $('#f-buscar').addEventListener('input', cargarTutorias);
 $('#f-curso').addEventListener('change', cargarTutorias);
 
-iniciarPanel(['admin']).then((user) => {
+iniciarPanel(['admin','tutor']).then((user) => {
   if (!user) return;
   cargarTutorias();
   cargarListas();
 });
+
+async function rechazarPropuesta(id){if(await confirmar('¿Rechazar esta propuesta? Quedará inactiva.'))await ejecutar(()=>api(`tutorias.php?id=${id}&accion=estado`,'PUT',{estado:0}),cargarTutorias);}

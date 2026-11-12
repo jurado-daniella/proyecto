@@ -55,3 +55,5 @@ async function cargarInicio() {
 }
 
 cargarInicio();
+
+(async()=>{ try {const j=await api('solicitudes.php');const box=document.createElement('section');box.className='grupo';const estados=['pendiente','aceptada','rechazada','cancelada','atendida'];box.innerHTML='<h2>Resumen de solicitudes</h2><div class="cifras">'+estados.map(s=>`<div><strong>${j.data.filter(x=>x.estado===s).length}</strong>${s}</div>`).join('')+'</div>';$('#proximas').parentElement.before(box);}catch(e){console.error(e.message);}})();

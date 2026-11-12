@@ -4,6 +4,12 @@ Env::load(__DIR__ . "/../.env");
 
 date_default_timezone_set("America/Guatemala");
 
+header('X-Content-Type-Options: nosniff');
+header('X-Frame-Options: DENY');
+header('Referrer-Policy: same-origin');
+header('Cache-Control: no-store');
+ini_set('display_errors', '0');
+ini_set('session.use_only_cookies', '1');
 #   SECURITY & SESSIONS
 #   cookie_secure solo si hay HTTPS: con XAMPP (http) la cookie no se enviaría.
 ini_set('session.cookie_httponly', '1');
@@ -18,6 +24,13 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+$now = time();
+if (isset($_SESSION['user_id']) && ($now - ($_SESSION['last_activity'] ?? $now) > 1800 || $now - ($_SESSION['created'] ?? $now) > 28800)) {
+    $_SESSION = [];
+    session_regenerate_id(true);
+}
+$_SESSION['created'] = $_SESSION['created'] ?? $now;
+$_SESSION['last_activity'] = $now;
 #   ENVIRONMENT DEFINITIONS
 define("HOST_DB", Env::get('DATABASE_URL', '127.0.0.1'));
 define("PORT_DB", Env::get('DATABASE_PORT', '3306'));

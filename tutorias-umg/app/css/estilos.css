@@ -1012,3 +1012,12 @@ td.actions > * + * {
 .panel {
   margin: 0;
 }
+
+.message-box{border:0;border-radius:12px;padding:0;width:min(560px,calc(100% - 32px));max-height:85dvh;box-shadow:0 20px 70px #0005;color:var(--texto,#243247)}
+.message-box::backdrop{background:#10243a99;backdrop-filter:blur(2px)}
+.message-box header{background:var(--azul,#193957);color:white;padding:16px 22px}.message-box h2{color:#fff;font-size:1.15rem;margin:0}
+.message-content{padding:22px;white-space:pre-line;overflow-wrap:anywhere}.message-box footer{padding:16px 22px;display:flex;justify-content:flex-end;gap:10px;border-top:1px solid #ddd}
+.message-input{display:grid;gap:8px;padding:0 22px 20px}.message-input textarea{width:100%;box-sizing:border-box}
+.day-appointment{padding:12px 0;border-bottom:1px solid #ddd;white-space:normal}.day-appointment h3{margin-bottom:6px}
+button.cal-day{border:1px solid transparent;background:transparent;color:inherit;cursor:pointer;font:inherit;min-height:38px}
+button.cal-day:hover,button.cal-day:focus-visible{outline:2px solid var(--azul,#193957);background:#edf3f9}button.cal-day.today{background:var(--azul);color:white}button.cal-day.out{color:#999}

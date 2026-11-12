@@ -108,9 +108,9 @@ formulario.addEventListener('submit', (e) => {
   );
 });
 
-function cancelarBloque(codigo) {
+async function cancelarBloque(codigo) {
   let b = bloques.find((x) => x.codigo === codigo);
-  if (!confirm(`¿Cancelar el bloque del ${formatDate(b.fecha)} a las ${b.hora_inicio}? Las solicitudes pendientes se rechazarán.`)) return;
+  if (!await confirmar(`¿Cancelar el bloque del ${formatDate(b.fecha)} a las ${b.hora_inicio}? Las solicitudes pendientes se rechazarán.`)) return;
   ejecutar(() => api(`bloques.php?id=${codigo}`, 'DELETE'), cargarBloques);
 }
 
