@@ -20,7 +20,7 @@ class Response
 {
     static function success($message, $data = [], $code = 1, $httpCode = 200)
     {
-        Audit::record($httpCode, $data ?? []);
+        Audit::record($httpCode, $data ?? [], (string)$message);
         http_response_code($httpCode);
         header("Content-Type: application/json; charset=utf-8");
         exit(json_encode([
@@ -32,7 +32,7 @@ class Response
 
     static function error($message, $code, $httpCode = 400)
     {
-        Audit::record($httpCode, $data ?? []);
+        Audit::record($httpCode, $data ?? [], (string)$message);
         http_response_code($httpCode);
         header("Content-Type: application/json; charset=utf-8");
         exit(json_encode([

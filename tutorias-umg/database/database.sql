@@ -122,3 +122,6 @@ CREATE TABLE IF NOT EXISTS bitacora (
  FOREIGN KEY(usuario_id) REFERENCES usuarios(id) ON DELETE SET NULL,
  INDEX idx_bitacora_fecha(fecha), INDEX idx_bitacora_usuario(usuario_id)
 );
+
+
+ALTER TABLE bitacora ADD COLUMN solicitud_id CHAR(32) NULL, ADD COLUMN ip_origen VARCHAR(45) NULL, ADD COLUMN detalle TEXT NULL, ADD COLUMN cambios LONGTEXT NULL;

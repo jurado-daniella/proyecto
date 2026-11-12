@@ -158,3 +158,16 @@ sesión. No almacena cuerpos HTTP, contraseñas, cookies ni tokens. Solo registr
 operaciones desde su activación, no reconstruye cambios anteriores ni cambios
 hechos directamente en phpMyAdmin. No expone edición ni eliminación en la API.
 Si falla el registro, se informa al log del servidor sin repetir operaciones del negocio.
+
+### Bitácora detallada
+En instalaciones existentes ejecutar una vez `database/migracion-bitacora-detallada.sql`
+después de `migracion-bitacora.sql` (ambas ya aplicadas localmente).
+`cambios` contiene JSON con tabla, registro, operación y campos antes/después.
+Incluye cambios relacionados, como reservar un bloque y rechazar otros aplicantes.
+`detalle` conserva el mensaje controlado de la operación; `solicitud_id` identifica
+la petición e `ip_origen` su dirección remota. Un cambio de contraseña solo deja
+`credencial_modificada: true`, nunca el valor ni su hash. No se guardan tokens.
+Se compara el estado de las tablas del sistema durante cada escritura; es una
+solución adecuada al volumen de este proyecto, no una auditoría de alta carga.
+Los registros anteriores conservan sus columnas nuevas vacías; no se inventa historial.
+Ver `tests/BITACORA-DETALLADA.md` para resultados y un evento detallado real.
