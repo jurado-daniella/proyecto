@@ -16,7 +16,12 @@ async function api(ruta, metodo = 'GET', datos = null) {
     headers: { 'Content-Type': 'application/json' },
   };
   if (metodo !== 'GET') opciones.headers['X-CSRF-Token'] = csrf;
-  if (datos) opciones.body = JSON.stringify(datos);
+  if (datos instanceof FormData) {
+    delete opciones.headers['Content-Type'];
+    opciones.body = datos;
+  } else if (datos) {
+    opciones.body = JSON.stringify(datos);
+  }
 
   let request = await fetch(`${API}/${ruta}`, opciones);
   let response;
@@ -155,6 +160,7 @@ async function iniciarPanel(rolesPermitidos) {
     <img src="assets/logo/dam-logo-horizontal-white.png" alt="DAM Tutorías">
     <nav>${enlaces}</nav>
     <div class="usuario">
+      <span id="foto-barra">${avatar(usuario.avatar, usuario.name)}</span>
       <span>${esc(usuario.name)}<small>${esc(detalle)}</small></span>
       <button onclick="salir()">Salir</button>
     </div>`;
