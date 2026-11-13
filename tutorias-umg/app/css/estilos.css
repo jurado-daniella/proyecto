@@ -1021,3 +1021,17 @@ td.actions > * + * {
 .day-appointment{padding:12px 0;border-bottom:1px solid #ddd;white-space:normal}.day-appointment h3{margin-bottom:6px}
 button.cal-day{border:1px solid transparent;background:transparent;color:inherit;cursor:pointer;font:inherit;min-height:38px}
 button.cal-day:hover,button.cal-day:focus-visible{outline:2px solid var(--azul,#193957);background:#edf3f9}button.cal-day.today{background:var(--azul);color:white}button.cal-day.out{color:#999}
+
+.perfil-foto {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.perfil-foto[hidden] { display: none; }
+.avatar.perfil-imagen {
+  width: 96px;
+  height: 96px;
+  font-size: 1.75rem;
+}
+#foto-barra .avatar { object-fit: cover; }

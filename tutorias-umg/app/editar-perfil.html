@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Editar perfil | DAM</title>
+  <link rel="icon" type="image/png" href="assets/logo/dam-favicon.png">
+  <link rel="stylesheet" href="css/estilos.css?v=20261113perfil">
+</head>
+<body class="panel">
+  <header id="barra" class="barra"></header>
+  <main class="main">
+    <section class="tarjeta">
+      <h1 class="tarjeta-titulo">Editar perfil</h1>
+      <div id="mensajes" class="stack"></div>
+      <form id="foto-perfil" class="grupo perfil-foto" hidden>
+        <div id="vista-foto"></div>
+        <div>
+          <label for="foto">Foto de perfil</label>
+          <input id="foto" name="foto" type="file" accept="image/jpeg,image/png,image/webp" required>
+          <p class="muted">JPG, PNG o WebP. Máximo 2 MB y 4096 × 4096 píxeles.</p>
+          <div class="form-actions">
+            <button class="btn btn-navy">Guardar foto</button>
+            <button id="quitar-foto" class="btn" type="button">Quitar foto</button>
+            <a class="btn" href="perfil.html">Volver a Mi cuenta</a>
+          </div>
+        </div>
+      </form>
+    </section>
+  </main>
+  <script src="js/comun.js?v=20261113perfil"></script>
+  <script src="js/editar-perfil.js?v=20261113perfil"></script>
+</body>
+</html>
